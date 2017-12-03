@@ -11,11 +11,11 @@ TITLE SOMA_PONTO
 ;LABIRINTO DB 9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,1,1,1,1,1,1,1,1,1,9,1,1,1,1,1,1,1,1,1,1,1,1,9,9,1,9,9,9,1,1,1,1,1,9,9,9,1,1,1,1,1,9,9,9,9,9,9,9,1,1,9,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,1,1,1,8,9,9,1,1,9,1,1,1,9,9,0,0,0,0,9,9,9,1,1,1,1,1,9,1,9,9,1,1,9,1,9,1,9,4,0,4,0,4,0,4,9,1,1,9,9,9,9,1,9,9,1,1,9,1,9,1,9,9,9,9,9,9,9,9,9,1,1,1,1,1,1,1,9,9,1,1,9,1,9,1,1,1,1,1,1,1,1,1,1,1,1,9,9,9,9,9,9,9,1,1,9,1,9,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,9,1,1,9,1,9,1,1,1,1,1,3,1,1,1,1,1,9,9,9,9,9,9,9,9,8,1,9,1,9,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9	
 ;POSICAO   DB 170
 LABIRINTO DB 9,9,9,9,9,1,3,9,9,8,4,9,9,9,9,9
-ARRAY DW 1,1,3,1,1,1,1,1,1
-POSICAO DB 2
+ARRAY DW 1,1,1,3,1,1,1,1,1
+POSICAO DB 3
 ;POSICAO   DW 7
 PONTOS    DB 0
-VIDAS     DB 2
+VIDAS     DB 1
 SUPERPAC  DB 0 ;COMEU A FRUTINHA?
 MSG_PERDEU DB "VC PERDEU O JOGO :C",0DH,0AH,'$'
 MSG_pontos DB 0DH,0AH,"Pontos: $"
@@ -63,6 +63,70 @@ down_continua:
 jmp down
 
 up:
+        xor bh,bh
+        mov bl,posicao
+        sub bl,3
+        ;add bl,1
+        mov dx,array[bx]
+        CMP DH,0
+	    JE SCR6 
+	    JMP PULA6
+	    SCR6:
+	    MOV DH,DL
+	    JMP continua6
+	    PULA6:
+	    MOV DL,DH 
+	    continua6:
+	    CMP DL,1
+        JE SOMA6   
+        CMP DL,4
+	    JE PERDEU6     
+	    CMP DL,8
+	    JE SUPERPODER_ON6 
+	    cmp dl,0
+	    je anda
+        JMP PRINTA_MATRIZ
+        ANDA6:   
+          ;add BL,4
+          MOV ARRAY[BX],3
+      
+          mov bl,POSICAO 
+          ;ADD BL,6  
+          ;add bl,3
+          add bl,2
+          MOV ARRAY[BX],0
+          
+          SUB POSICAO,3	
+	  
+	      JMP PRINTA_MATRIZ            
+	        
+        SOMA6: 
+         ADD PONTOS,1 
+         JMP ANDA6 
+      
+        SUPERPODER_ON6: 
+         ADD SUPERPAC,1 
+         JMP SOMA6 
+      
+        MATA_FANTASMA6:
+         MOV AL,PONTOS
+         ADD AL,1
+         MOV PONTOS,AL
+         JMP SOMA6 
+        
+        ;DECREMENTA VIDA, SE VIDA FOR 0 ACABA JOGO
+        PERDEU:  
+         CMP SUPERPAC,1
+         JE MATA_FANTASMA6 
+         DEC VIDAS
+        ;CMP VIDAS,0
+        ;JNE INICIO
+
+        ;PRINTA MSG 
+        MOV AH,09H
+        LEA DX,MSG_PERDEU
+        INT 21H 
+        
         jmp     teclado
 left:
 	  XOR BH,BH
@@ -122,7 +186,7 @@ left:
         JMP SOMA 
         
       ;DECREMENTA VIDA, SE VIDA FOR 0 ACABA JOGO
-      PERDEU:  
+      PERDEU6:  
         CMP SUPERPAC,1
         JE MATA_FANTASMA 
         ;DEC VIDAS
