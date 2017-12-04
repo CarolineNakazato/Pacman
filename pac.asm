@@ -1,0 +1,605 @@
+TITLE PACMAN
+.MODEL SMALL
+.STACK 100h
+;------------------------------------------------------------------------------------------------------------------
+.DATA
+
+        matriz db 20 dup (09h)
+        db 09h, 10 dup (01h), 09h, 7 dup (01h), 09h
+        db 09h, 8 dup (01h), 4 dup (09h), 01h , 5 dup (09h), 09h
+        db 09h, 01h, 3 dup(09h), 7 dup (01h), 2 dup (01h), 09h, 4 dup(01h), 09h
+        db 09h, 01h, 01h, 09h, 01h, 01h, 01h, 09h, 09h, 07h, 07h, 09h, 09h, 01h, 09h, 01h, 09h,09h, 01h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 01h, 01h, 09h, 00h, 00h, 00h, 00h, 09h, 01h, 09h, 01h, 09h, 09h, 01h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 01h, 01h, 09h, 04h, 04h, 04h, 04h, 09h, 01h, 01h, 01h, 09h, 09h, 01h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 09h, 01h, 09h, 00h, 00h, 00h, 00h, 09h, 01h, 09h, 09h, 09h, 09h, 01h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 09h, 01h, 09h, 09h, 09h, 09h, 09h, 09h, 01h, 01h, 01h, 01h, 01h, 01h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 09h, 01h, 00h, 00h, 00h, 03h, 00h, 00h, 01h, 09h, 09h, 09h, 09h, 09h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 09h, 01h, 00h, 00h, 00h, 00h, 00h, 00h, 01h, 01h, 01h, 01h, 01h, 01h, 09h
+        db 09h, 01h, 01h, 09h, 01h, 09h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 09h, 09h, 09h, 09h, 09h, 09h
+        db 09h, 01h, 01h, 09h, 08h, 09h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 01h, 02h, 09h
+        db 20 dup (09h)
+        db 6 dup ( 20 dup (00h) )
+
+        
+
+    num_ghosts db 01h
+    char_l db 09h
+    char_h db 09h
+    posX dw 00h
+    posY dw 00h
+    tamanho dw 00h
+    NUMarray db 30h,30h,30h,30h,30h,'$'
+    HIGHSCORE dw 00h
+    GAMESCORE dw 00h
+    VIDAS db 00h  ; falta implementar um contador de vidas na interface grafica (deixa que eu faço, nao é dificil)
+    FRUTAS db 00h ; falta implementar um contador de frutas na interface (deixa que eu faço, nao é dificil)
+    ;tanto p/ vidas quanto p/ frutas MAX=3, min=0 sendo que em 0 vidas perde o jogo
+    txt1 db 'GAME',0Ah,0Dh,'SCORE$'
+    txt2 db 'HIGH$'
+    txt3 db 'SCORE$'
+;------------------------------------------------------------------------------------------------------------------
+.CODE
+PROC MAIN
+        tabuleiro_h equ 180d
+        tabuleiro_l equ 220d
+        labirinto_color equ 32d
+
+        mov     AX,@DATA
+        mov     DS,AX
+        mov     AH, 00h
+        mov     AL, 13h
+        int     10h
+
+        lea     DX,txt1
+        mov     BL,0Dh
+        call    imprimeCOLORIDO;cor no   bl
+
+        mov     DH,00h
+        mov     DL,35d
+        call    setCursor
+
+        lea     DX,txt2
+        mov     BL,0Dh
+        call    imprimeCOLORIDO
+        
+        mov     DH,01d
+        mov     DL,035d
+        call    setCursor
+
+        lea     DX,txt3
+        mov     BL,0Dh
+        call    imprimeCOLORIDO
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        call    DrawTabuleiro
+        ; o jogo devera rodar um loop infinito disso, basicamente
+        ; cada vez que uma alteração na matriz ou pontuaçao for feita precisa-se gerar uma nova tela
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+        mov     posX,50d
+        mov     posY,5d
+        mov     tamanho,tabuleiro_l
+        mov     AL,15d
+        call    PrintLinhaH;cor no  AL
+        mov     tamanho,tabuleiro_h
+        call    PrintLinhaV;cor no  AL
+        mov     posX,270d
+
+        call    DrawSCORES
+
+        mov     AH,01h
+        int     21h
+        mov     AX, 00002h
+        int     10h
+        mov     AH,04Ch
+        int     021h
+ENDP MAIN
+;------------------------------------------------------------------------------------------------------------------
+
+;;==============================================================
+PROC interface
+
+        ret
+ENDP interface
+;;==============================================================
+
+;;==============================================================
+PROC switchTabuleiro;entry no AL
+        cmp     AL,00h
+        jne     swtichT_1
+        mov     AL,00h
+        jmp     pintaTile
+swtichT_1:;ponto
+        cmp     AL,01h
+        jne     swtichT_2
+        mov     AL,15d
+        call    drawPonto
+        jmp     fim_switchTabuleiro
+swtichT_2:;PILULA
+        cmp     AL,02h
+        jne     switchT_3
+        mov     AL,15d
+        call    drawSuperPonto
+        jmp     fim_switchTabuleiro
+switchT_3:;player
+        cmp     AL,03h
+        jne     switchT_4
+        call    drawPlayer
+        jmp     fim_switchTabuleiro
+switchT_4:;ghost
+        cmp     AL,04h
+        jne     switchT_7
+        ;FALTA GERAR A COR DO FANTASMA AQUI
+        call    drawGhost
+        jmp     fim_switchTabuleiro
+switchT_7:
+        cmp     AL,07h
+        jne     switchT_8
+        mov     AL,07d
+        call    DrawTile
+        jmp     fim_switchTabuleiro
+switchT_8:
+        cmp     AL,08h
+        jne     switchT_9
+        call    DrawFruta
+        jmp     fim_switchTabuleiro
+switchT_9:
+        cmp     AL,09h
+        jne     fim_switchTabuleiro
+        mov     AL,labirinto_color
+        jmp     pintaTile
+
+pintaTile:
+        call    DrawTile
+
+fim_switchTabuleiro:
+        ret
+ENDP switchTabuleiro
+;;==============================================================
+
+;;=============================================================
+;;================  DrawSCORES  ===============================
+DrawSCORES PROC
+push    DX
+push    BX
+push    AX
+        mov     DH,02d
+        mov     DL,00d
+        call    setCursor
+
+        mov     AX,GAMESCORE
+        call    NUMtoArray
+        lea     DX,NUMarray
+        mov     BL,07d
+        call    imprimeCOLORIDO
+
+        mov     DH,02d
+        mov     DL,035d
+        call    setCursor
+
+        mov     AX,HIGHSCORE
+        call    NUMtoArray
+        lea     DX,NUMarray
+        mov     BL,07d
+        call    imprimeCOLORIDO
+pop     AX
+pop     BX
+pop     DX
+        ret
+ENDP DrawSCORES
+;;=============================================================
+;;=============================================================
+
+;;=============================================================
+;;================  DrawTabuleiro  ============================
+PROC DrawTabuleiro
+mov     CH,20d
+mov     CL,20d
+mov     BX,00h
+mov     SI,00h
+desenha:
+        xor     AX,AX
+        mov     AL,matriz[BX+SI]
+get_positions:
+        push    AX
+        mov     AX,11d
+        mul     SI
+        add     AX,50d
+        mov     posX,AX
+        mov     AX,BX
+        push    BX
+        mov     BX,00014h
+        div     BX
+        mov     BL,09h
+        mul     BL
+        pop     BX
+        add     AX,5d
+        mov     posY,AX
+        pop     AX
+
+        call    switchTabuleiro
+        
+        inc     SI
+        cmp     SI,20d
+        jb     desenha
+        mov     SI,00h
+        add     BX,20d
+        cmp     BX,400d
+        jb     desenha
+        
+        ret
+DrawTabuleiro ENDP
+;;==============================================================
+;;==============================================================
+
+
+;;==============================================================
+;;================  DrawTile ===================================
+PROC DrawTile
+;entrada:   posX, posY & COR=AL
+push    posX
+push    posY
+        mov     tamanho,011d
+        mov     CX,09d
+DrawTile_0:
+        call    PrintLinhaH
+        inc     posY
+        loop    DrawTile_0
+pop     posY
+pop     posX
+        ret
+DrawTile ENDP
+;;==============================================================
+;;==============================================================
+
+
+;;==============================================================
+;;================  DrawPlayer ================================
+PROC DrawPlayer
+        mov     AL,44d
+        call    DrawTile
+        ret
+DrawPlayer ENDP
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;================  DrawFruta  =================================
+PROC DrawFruta
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,40d
+        add     posX,4
+        add     posY,2
+        mov     tamanho,4
+        call    printLinhaH
+        mov     CX,4
+        dec     posX
+        inc     posY
+        mov     tamanho,6
+frutadraw1:
+        call    printLinhaH
+        inc     posY
+        loop    frutadraw1
+        inc     posX
+        mov     tamanho,4
+        call    printLinhaH
+        pop     posY
+        pop     posX
+        push    posX
+        push    posY
+        inc     posX
+        inc     posX
+        mov     AH,0ch
+        mov     BH,00h
+        add     posX,2
+        add     posY,3
+        mov     CX,posX
+        mov     DX,posY
+        mov     AL,15d
+        int     010h
+        add     CX,2
+        dec     DX
+        mov     AL,0190d
+        int     010h
+        dec     DX
+        int     010h
+        inc     CX
+        int     010h
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+
+        ret
+DrawFruta ENDP
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;================  DrawGhost  ================================
+PROC DrawGhost
+push    posX
+push    posY
+push    AX
+push    BX
+push    CX
+push    DX
+
+        add     posX,3d
+        mov     tamanho,2d
+        call    PrintLinhaH
+        dec     posX
+        inc     posY
+        mov     tamanho,4d
+        call    printLinhaH
+        inc     posY
+        dec     posX
+        mov     tamanho,6d
+        call    printLinhaH
+        inc     posY
+        call    printLinhaH
+        inc     posY
+        dec     posX
+        mov     tamanho,8d
+        mov     CX,4d
+ghostdraw:
+        call    printLinhaH
+        inc     posY
+        loop    ghostdraw
+        mov     AH,0ch
+        mov     BH,00h
+        mov     CX,posX
+        mov     DX,posY
+        int     010h
+        add     CX,3
+        int     010h
+        inc     CX
+        int     010h
+        inc     CX
+        int     010h
+        add     CX,3
+        int     010h
+        
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+pop     posY
+pop     posX
+        ret
+DrawGhost ENDP
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;================  DrawPonto  =================================
+PROC DrawPonto
+push    posX
+push    posY
+        add     posX,4
+        add     posY,3
+
+        mov     tamanho,02d
+        mov     CX,03d
+DrawPonto_0:
+        call    PrintLinhaH
+        inc     posY
+        loop    DrawPonto_0
+pop     posY
+pop     posX
+        ret
+DrawPonto ENDP
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;================  DrawSuperPonto  ============================
+PROC DrawSuperPonto
+push    posX
+push    posY
+        add     posX,3
+        add     posY,2
+
+        mov     tamanho,04d
+        mov     CX,05d
+DrawPonto_1:
+        call    PrintLinhaH
+        inc     posY
+        loop    DrawPonto_1
+pop     posY
+pop     posX
+        ret
+DrawSuperPonto ENDP
+;;===========================================================
+;;============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;;==============================================================
+;;====================  NUMtoArray  ============================
+PROC NUMtoArray ;numero entry no AX
+push    BX
+push    CX
+push    SI
+push    DX
+        xor     DX,DX
+        mov     SI,4d
+        mov     BX,10d
+        mov     CX,5d
+NtoA:        
+        div     BX
+        add     DL,030h
+        mov     NUMarray[SI],DL
+        xor     DX,DX
+        dec     SI
+        loop    NtoA
+pop     DX
+pop     SI
+pop     CX
+pop     BX
+        ret
+NUMtoArray ENDP
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;====================== imprimeCOLORIDO =======================
+PROC imprimeCOLORIDO; offset do texto no DX. cor no BL
+        push    BX
+        push    DX
+        push    SI
+        xor     SI,SI
+        mov     AH,0Eh        
+printTEXT_1:
+        push    BX
+        mov     BX,DX
+        mov     AL,[BX+SI]
+        pop     BX
+        cmp     AL,'$'
+        je      printTEXT_end
+        inc     SI
+        mov     BH,00h
+        int     010h
+        jmp     printTEXT_1
+printTEXT_end:
+        pop     SI
+        pop     DX
+        pop     BX
+        ret
+ENDP imprimeCOLORIDO
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;================  PrintLinhaHORIZONTAL  ======================
+PROC PrintLinhaH
+;entrada:   posX, posY, tamanho
+;           COR=AL
+        push    AX
+        push    BX
+        push    CX
+        push    DX
+
+        mov     CX, word ptr [posX];coluna
+        add     CX, word ptr [tamanho]
+        mov     DX, word ptr [posY];linha
+        mov     AH, 0ch    ; put pixel
+u2:     int     10h
+        dec     CX
+        cmp     CX, word ptr [posX]
+        jae     u2
+
+        pop     DX
+        pop     CX
+        pop     BX
+        pop     AX
+        ret
+ENDP PrintLinhaH
+;;==============================================================
+;;==============================================================
+
+;;==============================================================
+;;================  PrintLinhaVERTICAL =========================
+PROC PrintLinhaV
+;entrada:   posX, posY, tamanho
+;           COR=AL
+        push    AX
+        push    BX
+        push    CX
+        push    DX
+
+        mov     CX, word ptr [posX];coluna
+        mov     DX, word ptr [posY];linha
+        add     DX, word ptr [tamanho]
+
+        mov     AH, 0ch    ; put pixel
+u1:     int     10h
+        dec     DX
+        cmp     DX, word ptr [posY]
+        jae     u1
+
+        pop     DX
+        pop     CX
+        pop     BX
+        pop     AX
+        ret
+ENDP PrintLinhaV
+;;==============================================================
+;;==============================================================
+
+
+
+
+
+
+;;===========================================================
+;;================  Teclado  ================================
+PROC Teclado
+teclad:
+        mov     AH,00h
+        int     016h
+        cmp     AH,048h
+        je      up
+        cmp     AH,04Bh
+        je      left
+        cmp     AH,04Dh
+        je      right
+        cmp     AH,050h
+        je      down
+        cmp     AH,01h
+        jne     teclad
+        jmp     teclado_fim
+
+up:
+        jmp     teclad
+left:
+        jmp     teclad
+right:
+        jmp     teclad
+down:
+        jmp     teclad
+
+teclado_fim:
+        ret
+Teclado ENDP
+;;===========================================================
+getCursor PROC          ;   GET CURSOR POSITION AND SIZE
+    mov     AH,03h      ; Retorna:
+    mov     BH,00h      ;   AX=0000h (phoenix bios (????))
+    int     10h         ;  s CH=start scan line // CL=end scan line
+    ret                 ;   DH=linha (00=top)
+ENDP getCursor          ;   DL=coluna (00=left)
+;-------------------------------------------------------------------------------------------------------------------
+setCursor PROC  ;entry={ DH=linhas(00=top) ; DL=colunas(00=left) }
+    mov     AH,02h  
+    mov     BH,00h  ; page number (color?)
+    int     10h
+    ret
+ENDP setCursor
+;;===========================================================
+END MAIN
