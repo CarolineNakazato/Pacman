@@ -1,0 +1,27 @@
+Analisando o código:
+NO SEGMENTO .DATA:
+
+Tem-se a matriz 20x20 (400 posicoes)
+0 --> ESPAÇO EM BRANCO
+1 --> Pontuação Simples ou Pastilha Simples
+2 --> Pilula ou Super Pastilha (fica invencivel por X movimentos ou por X segundos)
+3 --> Player, pacman
+4 --> Fantasma (falta definir as cores de cada fantasma * LER OBSERVACOES no fim do arquivo* )
+8 --> Fruta, dá mais pontos que o normal ou funciona como uma vida extra [VOCE DECIDE]
+------------------------------------------------------------------------------------------
+funcoes:
+NOME: imprimeCOLORIDO
+FUNCAO: Imprime um texto em colorido, usar $ para sinalizar que acabou
+PARAMETROS: offset do texto em DX (fazer LEA DX igual para a AH=09/INT=21h)
+	    cor do texto no BL ( para saber o codigo das cores, tem um programa
+	    			chamado cores junto com os fontes, execute e vá
+				 apertando enter para ver + (MAX 256) )
+~ ~ ~ ~ ~~ ~~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+NOME: setCursor
+PARAMETROS: { DH=linhas(00=top) ; DL=colunas(00=left) }
+FUNCAO: muda o cursor de posicao para que voce possa depois imprimir um texto em algum lugar da tela
+~ ~ ~ ~ ~~ ~~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+NOME: getCursor
+PARAMETROS: { DH=linhas(00=top) ; DL=colunas(00=left) }
+FUNCAO: pega informacoes da posicao do seu cursor em DH e DL (p/ usar com setCursor)
+OBS: a posicao do cursor e onde o proximo caractere impresso aparecera
