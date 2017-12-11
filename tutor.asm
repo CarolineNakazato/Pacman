@@ -61,15 +61,15 @@ PROC DesenhaNaTela
         ;mov     posX,150d
         ;mov     posy,150d
         ;call    DrawPacmanRight
-        mov     posX,50d
-        mov     posy,50d
-        call    DrawPacmanLeft
+        ;mov     posX,50d
+        ;mov     posy,50d
+        ;call    DrawPacmanLeft
         ;mov     posX,25d
         ;mov     posy,25d
         ;call    DrawPacmanUp
-        ;mov     posX,175d
-        ;mov     posy,175d
-        ;call    DrawPacmanDown
+        mov     posX,175d
+        mov     posy,175d
+        call    DrawPacmanDown
         ;mov     posX,100d
         ;mov     posY,50d
         ;mov     tamanho,50d
@@ -147,41 +147,35 @@ push    DX
 push    posX
 push    posY
         mov     AL,14d ;yellow
+        mov     tamanho,3;5
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
         mov     tamanho,5
-        call    printLinhaH
+        call    printLinhaH 
         sub     posX,1
         add     posY,1
         mov     tamanho,7
-        call    printLinhaH 
+        call    printLinhaH
         sub     posX,1
         add     posY,1
         mov     tamanho,9
         call    printLinhaH
-        sub     posX,1
-        add     posY,1
-        mov     tamanho,11
-        call    printLinhaH
-        ;add     posY,1
-        ;mov     tamanho,11
-        ;call    printLinhaH
-        ;add     posY,1
-        ;mov     tamanho,11
-        ;call    printLinhaH
-        add     posY,1
-        mov     tamanho,11
-        call    printLinhaH
-        add     posY,1
-        mov     tamanho,11
-        call    printLinhaH
-        add     posX,1
         add     posY,1
         mov     tamanho,9
-        call    printLinhaH 
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH
         add     posX,1
         add     posY,1
         mov     tamanho,7
         call    printLinhaH 
-        add     posX,2
+        add     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH 
+        add     posX,1
         add     posY,1
         mov     tamanho,3;5
         call    printLinhaH
@@ -206,13 +200,12 @@ push    DX
 push    posX
 push    posY
         mov     AL,00d ;black
-        mov     tamanho,5
+        mov     tamanho,3
         call    printLinhaH
         sub     posX,1
         add     posY,1
-        mov     tamanho,7
+        mov     tamanho,5
         call    printLinhaH
-        add     posX,1
         add     posY,1
         mov     tamanho,5
         call    printLinhaH
@@ -223,7 +216,7 @@ push    posY
         add     posX,1
         add     posY,1
         mov     tamanho,1
-        call    printLinhaH 
+        call    printLinhaH   
 pop     posY
 pop     posX
 pop     DX
@@ -244,44 +237,41 @@ push    DX
 push    posX
 push    posY
         mov     AL,14d ;yellow
-        mov     tamanho,5
+        mov     tamanho,3
         call    printLinhaH
         sub     posX,1
         add     posY,1
-        mov     tamanho,7
+        mov     tamanho,5
         call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
         sub     posX,1
         add     posY,1
         mov     tamanho,9
         call    printLinhaH
-        sub     posX,1
         add     posY,1
-        mov     tamanho,11
+        mov     tamanho,9
         call    printLinhaH
-        ;add     posY,1
-        ;mov     tamanho,11
-        ;call    printLinhaH
-        ;add     posY,1
-        ;mov     tamanho,11
-        ;call    printLinhaH
         add     posY,1
-        mov     tamanho,5
+        mov     tamanho,4
         call    printLinhaH
-        add     posX,7
+        add     posX,5
         mov     tamanho,4
         call    printLinhaH
         add     posY,1 
-        sub     posX,6
+        sub     posX,4
         mov     tamanho,3
         call    printLinhaH
-        add     posX,7
+        add     posX,5
         mov     tamanho,3
         call    printLinhaH
         add     posY,1 
-        sub     posX,6
+        sub     posX,4
         mov     tamanho,1
         call    printLinhaH 
-        add     posX,7
+        add     posX,5
         mov     tamanho,1
         call    printLinhaH
 pop     posY
@@ -304,43 +294,37 @@ push    DX
 push    posX
 push    posY
         mov     AL,14d ;yellow
+        mov     tamanho,3
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
         mov     tamanho,5
         call    printLinhaH
         sub     posX,1
         add     posY,1
-        mov     tamanho,7
-        call    printLinhaH 
-        sub     posX,1
-        add     posY,1
-        mov     tamanho,7
-        call    printLinhaH
-        sub     posX,1
-        add     posY,1
-        mov     tamanho,7
-        call    printLinhaH
-        ;add     posY,1
-        ;mov     tamanho,11
-        ;call    printLinhaH
-        ;add     posY,1
-        ;mov     tamanho,11
-        ;call    printLinhaH
-        add     posY,1
-        mov     tamanho,6
+        mov     tamanho,5
         call    printLinhaH
         add     posY,1
-        mov     tamanho,7
+        mov     tamanho,4
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,5
         call    printLinhaH
         add     posX,1
         add     posY,1
-        mov     tamanho,7
-        call    printLinhaH 
-        add     posX,1
-        add     posY,1
-        mov     tamanho,7
+        mov     tamanho,5
         call    printLinhaH 
         add     posX,1
         add     posY,1
         mov     tamanho,5
+        call    printLinhaH 
+        add     posX,1
+        add     posY,1
+        mov     tamanho,3
         call    printLinhaH
 pop     posY
 pop     posX
@@ -362,6 +346,7 @@ push    DX
 push    posX
 push    posY
         mov     AL,00d ;black
+        add     posY,1
         sub     posX,2
         mov     tamanho,2
         call    printLinhaH
@@ -371,26 +356,17 @@ push    posY
         call    printLinhaH
         sub     posX,1
         add     posY,1
+        mov     tamanho,5
+        call    printLinhaH
+        add     posY,1
         mov     tamanho,6
         call    printLinhaH
+        add     posY,1
         add     posX,1
-        add     posY,1
-        mov     tamanho,5
-        call    printLinhaH
-        sub     posX,1
-        add     posY,1
-        mov     tamanho,6
-        call    printLinhaH
-        ;add     posX,1
-        add     posY,1
-        mov     tamanho,5
-        call    printLinhaH 
-        ;sub     posX,1
-        add     posY,1
         mov     tamanho,4
         call    printLinhaH
         add     posY,1
-        mov     tamanho,3
+        mov     tamanho,2
         call    printLinhaH   
 pop     posY
 pop     posX
