@@ -917,11 +917,6 @@ PROC CheckWall
         push    BX
 continue_checkwall:
         cmp     matriz[SI],09h
-        jne     verificawall_A
-        mov     AX,00h
-        jmp     verificawall_end
-verificawall_A:      
-        cmp     matriz[SI],0Ah
         jne     verificawall_ghost1
         mov     AX,00h
         jmp     verificawall_end
