@@ -64,9 +64,9 @@ PROC DesenhaNaTela
         ;mov     posX,50d
         ;mov     posy,50d
         ;call    DrawPacmanLeft
-        ;mov     posX,25d
-        ;mov     posy,25d
-        ;call    DrawPacmanUp
+        mov     posX,25d
+        mov     posy,25d
+        call    DrawPacmanUp
         mov     posX,175d
         mov     posy,175d
         call    DrawPacmanDown
@@ -228,8 +228,39 @@ DrawPacmanUp ENDP
 ;;==============================================================
 
 
-;;================  DrawPacmanDown  ============================
-PROC DrawPacmanDown
+
+;;================  DrawPacmanSemiUp  ==========================
+PROC DrawPacmanSemiUp
+call drawPacman
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,00d ;black
+        mov     tamanho,3
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,2
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,1
+        call    printLinhaH  
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+        ret
+DrawPacmanSemiUp ENDP
+;;==============================================================
+
+
+;;================  DrawPacmanSemiDown  ========================
+PROC DrawPacmanSemiDown
 push    AX
 push    BX
 push    CX
@@ -272,6 +303,60 @@ push    posY
         mov     tamanho,1
         call    printLinhaH 
         add     posX,5
+        mov     tamanho,1
+        call    printLinhaH
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+
+        ret
+DrawPacmanSemiDown ENDP
+;;============================================================== 
+
+
+;;================  DrawPacmanDown  ============================
+PROC DrawPacmanDown
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,14d ;yellow
+        mov     tamanho,3
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH
+        add     posY,1 
+        mov     tamanho,3
+        call    printLinhaH
+        add     posX,7
+        mov     tamanho,2
+        call    printLinhaH
+        add     posY,1 
+        sub     posX,6
+        mov     tamanho,1
+        call    printLinhaH 
+        add     posX,7
         mov     tamanho,1
         call    printLinhaH
 pop     posY
@@ -335,6 +420,57 @@ pop     AX
         ret
 DrawPacmanRight ENDP
 ;;==============================================================
+
+;;================  DrawPacmanSemiRight  ============================
+PROC DrawPacmanSemiRight
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,14d ;yellow
+        mov     tamanho,3
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,6
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,6
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        add     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH 
+        add     posX,1
+        add     posY,1
+        mov     tamanho,3
+        call    printLinhaH
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+        ret
+DrawPacmanSemiRight ENDP
+;;==============================================================
                                                                 
 ;;================  DrawPacmanLeft  ============================
 PROC DrawPacmanLeft 
@@ -378,6 +514,37 @@ pop     AX
 DrawPacmanLeft ENDP
 ;;==============================================================
  
+;;================  DrawPacmanSemiLeft  ========================
+PROC DrawPacmanSemiLeft 
+call drawPacman
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,00d ;black
+        sub     posX,3
+        add     posY,3
+        mov     tamanho,3
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,4
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,3
+        call    printLinhaH   
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+        ret
+DrawPacmanSemiLeft ENDP
+;;==============================================================
 
 ;;====================== imprimeCOLORIDO =======================
 PROC imprimeCOLORIDO; offset do texto no DX. cor no BL
