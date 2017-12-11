@@ -61,15 +61,15 @@ PROC DesenhaNaTela
         ;mov     posX,150d
         ;mov     posy,150d
         ;call    DrawPacmanRight
-        ;mov     posX,50d
-        ;mov     posy,50d
-        ;call    DrawPacmanLeft
-        mov     posX,25d
-        mov     posy,25d
-        call    DrawPacmanUp
-        mov     posX,175d
-        mov     posy,175d
-        call    DrawPacmanDown
+        mov     posX,50d
+        mov     posy,50d
+        call    DrawPacmanLeft
+        ;mov     posX,25d
+        ;mov     posy,25d
+        ;call    DrawPacmanUp
+        ;mov     posX,175d
+        ;mov     posy,175d
+        ;call    DrawPacmanDown
         ;mov     posX,100d
         ;mov     posY,50d
         ;mov     tamanho,50d
@@ -304,107 +304,100 @@ push    DX
 push    posX
 push    posY
         mov     AL,14d ;yellow
-        add     posX,3
-        add     posY,1
-        mov     tamanho,4
-        call    printLinhaH
-        mov     CX,6
-        dec     posX
-        inc     posY
-        mov     tamanho,7
-DrawPacmanRight1:
-        call    printLinhaH
-        inc     posY
-        loop    DrawPacmanRight1
-        inc     posX
         mov     tamanho,5
         call    printLinhaH
-        pop     posY
-        pop     posX
-        push    posX
-        push    posY
-        inc     posX
-        inc     posX
-        mov     AH,0ch
-        mov     BH,00h
-        add     posX,7
-        add     posY,6
-        mov     CX,posX
-        mov     DX,posY
-        mov     AL,0d
-        int     010h
-        ;add     CX,2
-        ;dec     DX
-        ;mov     AL,0190d
-        ;int     010h
-        dec     DX
-        int     010h
-        inc     CX
-        int     010h
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
+        ;add     posY,1
+        ;mov     tamanho,11
+        ;call    printLinhaH
+        ;add     posY,1
+        ;mov     tamanho,11
+        ;call    printLinhaH
+        add     posY,1
+        mov     tamanho,6
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        add     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        add     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH
 pop     posY
 pop     posX
 pop     DX
 pop     CX
 pop     BX
 pop     AX
-
         ret
 DrawPacmanRight ENDP
 ;;==============================================================
                                                                 
 ;;================  DrawPacmanLeft  ============================
-PROC DrawPacmanLeft
+PROC DrawPacmanLeft 
+call drawPacman
 push    AX
 push    BX
 push    CX
 push    DX
 push    posX
 push    posY
-        mov     AL,14d ;yellow
-        add     posX,3
+        mov     AL,00d ;black
+        sub     posX,2
+        mov     tamanho,2
+        call    printLinhaH
+        sub     posX,1
         add     posY,1
         mov     tamanho,4
         call    printLinhaH
-        mov     CX,6
-        dec     posX
-        inc     posY
-        mov     tamanho,7
-DrawPacmanLeft1:
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,6
         call    printLinhaH
-        inc     posY
-        loop    DrawPacmanLeft1
-        inc     posX
+        add     posX,1
+        add     posY,1
         mov     tamanho,5
         call    printLinhaH
-        pop     posY
-        pop     posX
-        push    posX
-        push    posY
-        inc     posX
-        inc     posX
-        mov     AH,0ch
-        mov     BH,00h
-        add     posX,7
-        add     posY,6
-        mov     CX,posX
-        mov     DX,posY
-        mov     AL,0d
-        int     010h
-        ;add     CX,2
-        ;dec     DX
-        ;mov     AL,0190d
-        ;int     010h
-        dec     DX
-        int     010h
-        inc     CX
-        int     010h
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,6
+        call    printLinhaH
+        ;add     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH 
+        ;sub     posX,1
+        add     posY,1
+        mov     tamanho,4
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,3
+        call    printLinhaH   
 pop     posY
 pop     posX
 pop     DX
 pop     CX
 pop     BX
 pop     AX
-
         ret
 DrawPacmanLeft ENDP
 ;;==============================================================
