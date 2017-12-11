@@ -108,7 +108,7 @@ GPlayerREF_H db 00h, 00h, 00h, 00h ; 0=(esquerda), 1=(direita)
 
 TIMER dw 00h
 Tflag db 00h
-EXPIRA dw 00h
+EXPIRA dw 05h
 
     posX dw 00h
     posY dw 00h
@@ -226,6 +226,7 @@ zeraDWs:
         mov	GHOST_POS[4],0D2h
         mov	GHOST_POS[6],0D3h
 	mov	[PACMAN_DIRECTION],00h
+        mov     [EXPIRA],05h
 	mov	[TIMER],00h
 	mov	[Tflag],00h
 	mov	[posX],00h
@@ -350,6 +351,10 @@ interface_go:
         mov     GHOST_STATUS[1],00h
         mov     GHOST_STATUS[2],00h
         mov     GHOST_STATUS[3],00h
+        mov     movimento_ghost[0],02h
+        mov     movimento_ghost[1],03h
+        mov     movimento_ghost[2],02h
+        mov     movimento_ghost[3],03h
 interface_01:
         push    SI
         cmp     [TIMER],250d
@@ -555,6 +560,14 @@ saijaula_ghost3:
         jmp     saijaula_end
 saijaula_end:
         pop     BX
+        cmp     BX,01h
+        je      saijaula_end1
+        cmp     BX,03h
+        jne     saijaula_end2
+saijaula_end1:
+        mov     movimento_ghost[BX],03h
+        jmp     GHOST_CONTINUA_2
+saijaula_end2:
 	inc	movimento_ghost[BX]
 GHOST_CONTINUA_2:
         jmp     ghost_movCONTINUA
@@ -563,9 +576,7 @@ ghost_mov33:
 ghost_mov2:
         cmp     movimento_ghost[BX],02h
         jne     ghost_mov33
-        ;;;;;;; apagar esse inc depois
-        inc     movimento_ghost[BX]
-        ;call    ghostMOV_chase
+        call    ghostMOV_chase
         jmp     ghost_movCONTINUA
 ghost_mov3:
         cmp     movimento_ghost[BX],03h
@@ -577,7 +588,7 @@ ghost_mov_backloop:
 ghost_mov4:
         cmp     movimento_ghost[BX],04h
         jne     ghost_mov5
-        ;call    ghostMOV_fuga
+        call    ghostMOV_fuga
         jmp     ghost_movCONTINUA
 ghost_mov5:
         cmp     movimento_ghost[BX],05h
@@ -593,6 +604,125 @@ ghost_movCONTINUA:
         pop     BX
         ret
 ENDP MovimentoFantasma
+;;==============================================================
+PROC ghostMOV_chase     ;return DX
+;GPlayerREF_V ; 0=(cima), 1=(baixo)
+;GPlayerREF_H ; 0=(esquerda), 1=(direita)
+push    AX
+push    BX
+push    CX
+        call    Ghost_DIST_Player
+chase1: cmp	[GPlayerDST_H],00h
+	jne	chase2
+	jmp	alinhado_vertical
+chase2:	cmp	[GPlayerDST_V],00h
+	jne	chase3
+	jmp	alinhado_horizontal
+	jmp	chases_end
+chase3: mov	AL,[GPlayerDST_V]
+	cmp	[GPlayerDST_H],AL
+	jb	desloca_vertical
+desloca_horizontal:
+	jmp	alinhado_horizontal
+desloca_vertical:
+	jmp	alinhado_vertical
+chase4:
+        call    getRandom
+	cmp	AX,DX
+	je	chase4
+        and     AX,03h
+        mov     DX,AX
+        call    MOVE_GHOST_PARA_DIRECAO
+        jmp     chases_end2
+;--------------------------------------
+alinhado_vertical:
+	cmp	[GPlayerREF_V],00h
+	jne	alinhado_verticalBAIXO
+	mov	DX,00h
+	jmp	chases_end
+alinhado_verticalBAIXO:
+	mov	DX,01h
+	jmp	chases_end
+;--------------------------------------
+alinhado_horizontal:
+	cmp	[GPlayerREF_H],00h
+	jne	alinhado_verticalDIREITA
+	mov	DX,02h
+	jmp	chases_end
+alinhado_verticalDIREITA:
+	mov	DX,03h
+	jmp	chases_end
+;--------------------------------------
+chases_end:
+	call    MOVE_GHOST_PARA_DIRECAO
+        cmp     AX,00h
+	je	chase4
+chases_end2:
+pop     CX
+pop     BX
+pop     Ax
+        ret
+ENDP ghostMOV_chase
+;;==============================================================
+;;==============================================================
+PROC ghostMOV_fuga     ;return DX
+;GPlayerREF_V ; 0=(cima), 1=(baixo)
+;GPlayerREF_H ; 0=(esquerda), 1=(direita)
+push    AX
+push    BX
+push    CX
+        call    Ghost_DIST_Player
+fuga1: cmp	[GPlayerDST_H],00h
+	jne	fuga2
+	jmp	fugirpara_vertical
+fuga2:	cmp	[GPlayerDST_V],00h
+	jne	fuga3
+	jmp	fugirpara_horizontal
+	jmp	fugas_end
+fuga3: mov	AL,[GPlayerDST_V]
+	cmp	[GPlayerDST_H],AL
+	jb	fuga_vertical
+fuga_horizontal:
+	jmp	fugirpara_horizontal
+fuga_vertical:
+	jmp	fugirpara_vertical
+fuga4:
+        call    getRandom
+	cmp	AX,DX
+	je	fuga4
+        and     AX,03h
+        mov     DX,AX
+        call    MOVE_GHOST_PARA_DIRECAO
+        jmp     fugas_end2
+;--------------------------------------
+fugirpara_vertical:
+	cmp	[GPlayerREF_V],00h
+	jne	fugirpara_verticalBAIXO
+	mov	DX,01h
+	jmp	fugas_end
+fugirpara_verticalBAIXO:
+	mov	DX,00h
+	jmp	fugas_end
+;--------------------------------------
+fugirpara_horizontal:
+	cmp	[GPlayerREF_H],00h
+	jne	fugirpara_verticalDIREITA
+	mov	DX,03h
+	jmp	fugas_end
+fugirpara_verticalDIREITA:
+	mov	DX,02h
+	jmp	fugas_end
+;--------------------------------------
+fugas_end:
+	call    MOVE_GHOST_PARA_DIRECAO
+        cmp     AX,00h
+	je	fuga4
+fugas_end2:
+pop     CX
+pop     BX
+pop     Ax
+        ret
+ENDP ghostMOV_fuga
 ;;==============================================================
 PROC ghostMOV_random
         push    BX
@@ -805,9 +935,19 @@ push    BX
 
 ;GPlayerREF_V ; 0=(cima), 1=(baixo)
 ;GPlayerREF_H ; 0=(esquerda), 1=(direita)
+        
         call    GetGhostPos
+        push    BX
+        mov     AX,BX
+        mov     BX,02h
+        mul     BL
+        mov     BX,AX
         mov     SI,GHOST_POS[BX]
+        pop     BX
+
+        push    BX
         push    SI
+
         mov     AX,SI
         mov     BL,020d
         div     BL
@@ -856,8 +996,8 @@ calcDIST_H:
         sub     SI,AX
         mov     AX,SI
         pop     BX
-        mov     GPlayerDST_H[BX],DL
-        push    BX
+        mov     GPlayerDST_H[BX],AL
+
 pop     BX
 pop     AX
 pop     DX
@@ -876,12 +1016,13 @@ PROC SUPER_PACMAN
 
         mov     AX,[TIMER]
         mov     [EXPIRA],AX
-        add     [EXPIRA],030d
+        add     [EXPIRA],045d
 
 
 super_loop:
         cmp     GHOST_STATUS[SI],02h
         je      super_skip
+        mov     movimento_ghost[SI],04h
         mov     GHOST_STATUS[SI],01h
 super_skip:
         inc     SI
@@ -1049,6 +1190,10 @@ reset_tabuleiro1:
         mov     movimento_ghost[01],00h
         mov     movimento_ghost[02],00h
         mov     movimento_ghost[03],00h
+
+        mov     [EXPIRA],05h
+        mov     [TIMER],00h
+
 
         mov     matriz[0D0h],04h
         mov     matriz[0D1h],05h
