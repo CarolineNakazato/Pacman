@@ -106,9 +106,10 @@ GPlayerREF_V db 00h, 00h, 00h, 00h ; 0=(cima), 1=(baixo)
 GPlayerDST_H db 00h, 00h, 00h, 00h
 GPlayerREF_H db 00h, 00h, 00h, 00h ; 0=(esquerda), 1=(direita)
 
+
 TIMER dw 00h
 Tflag db 00h
-EXPIRA dw 05h
+EXPIRA dw 0FFh
 
     posX dw 00h
     posY dw 00h
@@ -226,7 +227,7 @@ zeraDWs:
         mov	GHOST_POS[4],0D2h
         mov	GHOST_POS[6],0D3h
 	mov	[PACMAN_DIRECTION],00h
-        mov     [EXPIRA],05h
+        mov     [EXPIRA],0FFh
 	mov	[TIMER],00h
 	mov	[Tflag],00h
 	mov	[posX],00h
@@ -593,7 +594,21 @@ ghost_mov4:
 ghost_mov5:
         cmp     movimento_ghost[BX],05h
         jne     ghost_movCONTINUA
-        ;call    ghostMOV_morto
+        call    ghostMOV_base
+        push    BX
+        mov     AX,BX
+        mov     BX,02h
+        mul     BL;result AX
+        mov     BX,AX;ta no ax
+        cmp     GHOST_COUNTER[BX],035d
+        pop     BX
+        jb      continua_ghostmov5
+        push    BX
+        mov     BX,AX
+        mov     GHOST_COUNTER[BX],00d
+        pop     BX
+        mov     movimento_ghost[BX],00h
+continua_ghostmov5:
         jmp     ghost_movCONTINUA
 ghost_movCONTINUA:
 
@@ -604,6 +619,31 @@ ghost_movCONTINUA:
         pop     BX
         ret
 ENDP MovimentoFantasma
+;;==============================================================
+PROC ghostMOV_base
+push	AX
+push	SI
+	call	GetGhostPos
+	push    BX
+        mov     AX,BX
+        mov     BX,02h
+        mul     BL ;result AX
+        mov     BX,AX
+        mov     SI,GHOST_POS[BX]
+        pop     BX
+	mov     AL,GHOST_TILE[BX]
+        mov     matriz[SI],AL
+	mov	GHOST_TILE[BX],00h
+	push    BX
+	mov	AX,BX
+	add	AX,04h
+        add     BX,0D0h
+        mov     matriz[BX],AL
+        pop     BX
+pop	SI
+pop	AX
+        ret
+ENDP ghostMOV_base
 ;;==============================================================
 PROC ghostMOV_chase     ;return DX
 ;GPlayerREF_V ; 0=(cima), 1=(baixo)
@@ -877,6 +917,11 @@ PROC CheckWall
         push    BX
 continue_checkwall:
         cmp     matriz[SI],09h
+        jne     verificawall_A
+        mov     AX,00h
+        jmp     verificawall_end
+verificawall_A:      
+        cmp     matriz[SI],0Ah
         jne     verificawall_ghost1
         mov     AX,00h
         jmp     verificawall_end
@@ -918,11 +963,6 @@ verificawall_end:
 ENDP CheckWall
 ;;=======================================================
 ;;=======================================================
-
-
-
-
-;;==============================================================
 PROC Ghost_DIST_Player
 ;Procedimento para calcular a distancia entre Ghost e Player
 ;Tendo como referencia o Ghost, isto é: o quão longe está o player do ghost
@@ -1021,6 +1061,8 @@ PROC SUPER_PACMAN
 
 super_loop:
         cmp     GHOST_STATUS[SI],02h
+        je      super_skip
+        cmp     movimento_ghost[SI],05h
         je      super_skip
         mov     movimento_ghost[SI],04h
         mov     GHOST_STATUS[SI],01h
@@ -1191,7 +1233,7 @@ reset_tabuleiro1:
         mov     movimento_ghost[02],00h
         mov     movimento_ghost[03],00h
 
-        mov     [EXPIRA],05h
+        mov     [EXPIRA],0FFh
         mov     [TIMER],00h
 
 
@@ -1271,6 +1313,8 @@ ghost_interactEAT:
         jne     ghost_interactDEAD
         mov     GHOST_STATUS[SI],02h
         add     [GAMESCORE],200d
+        mov     GHOST_COUNTER[SI],00h
+        mov     movimento_ghost[SI],05h
         jmp     ghost_interactend
 ghost_interactDEAD:
         cmp     GHOST_STATUS[SI],02h
