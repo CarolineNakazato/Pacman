@@ -48,21 +48,33 @@ PROC DesenhaNaTela
         ; COMO DESENHA PIXELS INDIVIDUAIS NA TELA?
         ; ACESSE: http://www.ctyme.com/intr/rb-0104.htm
 
-        mov     BL,03d;BL=COR DO ESCRITO
-        lea     DX,TXT_MSG
-        call    imprimeCOLORIDO
+        ;mov     BL,03d;BL=COR DO ESCRITO
+        ;lea     DX,TXT_MSG
+        ;call    imprimeCOLORIDO
 
-        mov     posX,50d
-        mov     posy,50d
-        call    DrawFruta
+        ;mov     posX,10d
+        ;mov     posy,10d
+        ;call    DrawFruta 
+        ;mov     posX,75d
+        ;mov     posy,75d
+        ;call    DrawPacman    
+        ;mov     posX,150d
+        ;mov     posy,150d
+        ;call    DrawPacmanRight
+        ;mov     posX,50d
+        ;mov     posy,50d
+        ;call    DrawPacmanLeft
         mov     posX,25d
         mov     posy,25d
         call    DrawPacmanUp
-        mov     posX,100d
-        mov     posY,50d
-        mov     tamanho,50d
-        mov     AL,0Dh;AL=COR DA LINHA
-        call    PrintLinhaV
+        mov     posX,175d
+        mov     posy,175d
+        call    DrawPacmanDown
+        ;mov     posX,100d
+        ;mov     posY,50d
+        ;mov     tamanho,50d
+        ;mov     AL,0Dh;AL=COR DA LINHA
+        ;call    PrintLinhaV
         ;AS CORES PODEM SER DESCOBERTAS EXECUTANDO O PROGRAMA CORES.ASM
         ret
 ENDP DesenhaNaTela
@@ -124,31 +136,188 @@ pop     AX
 
         ret
 DrawFruta ENDP
-;;============================================================== 
+;;==============================================================
 
-;;================  DrawPacmanUp  =================================
-PROC DrawPacmanUp
+;;================  DrawPacman  ================================
+PROC DrawPacman
 push    AX
 push    BX
 push    CX
 push    DX
 push    posX
 push    posY
-        mov     AL,40d
-        add     posX,3
-        add     posY,2
+        mov     AL,14d ;yellow
+        mov     tamanho,5
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,11
+        call    printLinhaH
+        ;add     posY,1
+        ;mov     tamanho,11
+        ;call    printLinhaH
+        ;add     posY,1
+        ;mov     tamanho,11
+        ;call    printLinhaH
+        add     posY,1
+        mov     tamanho,11
+        call    printLinhaH
+        add     posY,1
+        mov     tamanho,11
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH 
+        add     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        add     posX,2
+        add     posY,1
+        mov     tamanho,3;5
+        call    printLinhaH
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+
+        ret
+DrawPacman ENDP
+;;============================================================== 
+
+;;================  DrawPacmanUp  ==============================
+PROC DrawPacmanUp
+call drawPacman
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,00d ;black
+        mov     tamanho,5
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,3
+        call    printLinhaH
+        add     posX,1
+        add     posY,1
+        mov     tamanho,1
+        call    printLinhaH 
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+        ret
+DrawPacmanUp ENDP
+;;==============================================================
+
+
+;;================  DrawPacmanDown  ============================
+PROC DrawPacmanDown
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,14d ;yellow
+        mov     tamanho,5
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,7
+        call    printLinhaH 
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,9
+        call    printLinhaH
+        sub     posX,1
+        add     posY,1
+        mov     tamanho,11
+        call    printLinhaH
+        ;add     posY,1
+        ;mov     tamanho,11
+        ;call    printLinhaH
+        ;add     posY,1
+        ;mov     tamanho,11
+        ;call    printLinhaH
+        add     posY,1
+        mov     tamanho,5
+        call    printLinhaH
+        add     posX,7
         mov     tamanho,4
         call    printLinhaH
-        mov     CX,4
+        add     posY,1 
+        sub     posX,6
+        mov     tamanho,3
+        call    printLinhaH
+        add     posX,7
+        mov     tamanho,3
+        call    printLinhaH
+        add     posY,1 
+        sub     posX,6
+        mov     tamanho,1
+        call    printLinhaH 
+        add     posX,7
+        mov     tamanho,1
+        call    printLinhaH
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+
+        ret
+DrawPacmanDown ENDP
+;;============================================================== 
+                                                                
+;;================  DrawPacmanRight  ============================
+PROC DrawPacmanRight
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,14d ;yellow
+        add     posX,3
+        add     posY,1
+        mov     tamanho,4
+        call    printLinhaH
+        mov     CX,6
         dec     posX
         inc     posY
-        mov     tamanho,6
-DrawPacmanUp1:
+        mov     tamanho,7
+DrawPacmanRight1:
         call    printLinhaH
         inc     posY
-        loop    DrawPacmanUp1
+        loop    DrawPacmanRight1
         inc     posX
-        mov     tamanho,4
+        mov     tamanho,5
         call    printLinhaH
         pop     posY
         pop     posX
@@ -158,16 +327,16 @@ DrawPacmanUp1:
         inc     posX
         mov     AH,0ch
         mov     BH,00h
-        add     posX,2
-        add     posY,3
+        add     posX,7
+        add     posY,6
         mov     CX,posX
         mov     DX,posY
-        mov     AL,15d
+        mov     AL,0d
         int     010h
-        add     CX,2
-        dec     DX
-        mov     AL,0190d
-        int     010h
+        ;add     CX,2
+        ;dec     DX
+        ;mov     AL,0190d
+        ;int     010h
         dec     DX
         int     010h
         inc     CX
@@ -180,8 +349,67 @@ pop     BX
 pop     AX
 
         ret
-DrawPacmanUp ENDP
+DrawPacmanRight ENDP
 ;;==============================================================
+                                                                
+;;================  DrawPacmanLeft  ============================
+PROC DrawPacmanLeft
+push    AX
+push    BX
+push    CX
+push    DX
+push    posX
+push    posY
+        mov     AL,14d ;yellow
+        add     posX,3
+        add     posY,1
+        mov     tamanho,4
+        call    printLinhaH
+        mov     CX,6
+        dec     posX
+        inc     posY
+        mov     tamanho,7
+DrawPacmanLeft1:
+        call    printLinhaH
+        inc     posY
+        loop    DrawPacmanLeft1
+        inc     posX
+        mov     tamanho,5
+        call    printLinhaH
+        pop     posY
+        pop     posX
+        push    posX
+        push    posY
+        inc     posX
+        inc     posX
+        mov     AH,0ch
+        mov     BH,00h
+        add     posX,7
+        add     posY,6
+        mov     CX,posX
+        mov     DX,posY
+        mov     AL,0d
+        int     010h
+        ;add     CX,2
+        ;dec     DX
+        ;mov     AL,0190d
+        ;int     010h
+        dec     DX
+        int     010h
+        inc     CX
+        int     010h
+pop     posY
+pop     posX
+pop     DX
+pop     CX
+pop     BX
+pop     AX
+
+        ret
+DrawPacmanLeft ENDP
+;;==============================================================
+ 
+
 ;;====================== imprimeCOLORIDO =======================
 PROC imprimeCOLORIDO; offset do texto no DX. cor no BL
         push    BX
